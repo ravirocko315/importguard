@@ -1,12 +1,15 @@
-## How it works
+![Run Tests](https://github.com/ravirocko315/importguard/actions/workflows/test.yml/badge.svg)
 
-`importguard` parses a Python file with the built-in `ast` module; it does not run the file being checked. This prototype can inspect some direct calls, such as `requests.get()`, by importing the corresponding installed package. Importing a package can run its initialization code, so use this prototype in a trusted Python environment.
+# importguard
 
-An import reported as missing may simply be a valid package that is not installed in the current environment.
+Catch AI-hallucinated imports and function calls **before you run the code**.
 
-## Current limitations
+LLMs like ChatGPT and Copilot often generate code that *looks* correct but calls functions or imports packages that don't actually exist. `importguard` scans your Python file and verifies every import and function call against what's actually installed — no guessing, no hardcoded lists.
 
-- Supports Python files only.
-- Checks a limited form of direct calls, such as `requests.get()`.
-- Does not reliably understand aliases, `from ... import ...`, chained calls, or methods on objects.
-- A reported missing package is not proof that the package name is hallucinated.
+## Example
+
+```python
+import requests
+
+response = requests.get("https://example.com")   # real
+data = requests.get_jsonnn()                      # hallucinated
