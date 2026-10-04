@@ -1,47 +1,12 @@
-# importguard
-
-Catch AI-hallucinated imports and function calls **before you run the code**.
-
-LLMs like ChatGPT and Copilot often generate code that *looks* correct but calls functions or imports packages that don't actually exist. `importguard` scans your Python file and verifies every import and function call against what's actually installed — no guessing, no hardcoded lists.
-
-## Example
-
-\`\`\`python
-import requests
-
-response = requests.get("https://example.com")   # real
-data = requests.get_jsonnn()                      # hallucinated
-\`\`\`
-
-\`\`\`bash
-$ importguard check myfile.py
-
-IMPORT CHECK
-✓ requests: installed
-
-CALL CHECK
-✓ Line 3: requests.get()
-✗ Line 4: requests.get_jsonnn() does not exist!
-\`\`\`
-
-## Install
-
-\`\`\`bash
-git clone https://github.com/YOUR_USERNAME/importguard
-cd importguard
-pip install -e .
-\`\`\`
-
-## Usage
-
-\`\`\`bash
-importguard check path/to/file.py
-\`\`\`
-
 ## How it works
 
-importguard parses your file using Python's built-in `ast` module (no code execution, fully safe), then checks each import against the standard library and installed packages, and verifies each method call using live introspection against the real module.
+`importguard` parses a Python file with the built-in `ast` module; it does not run the file being checked. This prototype can inspect some direct calls, such as `requests.get()`, by importing the corresponding installed package. Importing a package can run its initialization code, so use this prototype in a trusted Python environment.
 
-## Status
+An import reported as missing may simply be a valid package that is not installed in the current environment.
 
-Early v0.1 — actively being built. Feedback and issues welcome.
+## Current limitations
+
+- Supports Python files only.
+- Checks a limited form of direct calls, such as `requests.get()`.
+- Does not reliably understand aliases, `from ... import ...`, chained calls, or methods on objects.
+- A reported missing package is not proof that the package name is hallucinated.
