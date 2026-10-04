@@ -8,6 +8,12 @@ dependencies = [
     "rich"
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "requests"
+]
+
 [project.scripts]
 importguard = "importguard_app.cli:app"
 
