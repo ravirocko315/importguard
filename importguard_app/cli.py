@@ -1,7 +1,7 @@
 import typer
 from rich.console import Console
 from importguard_app.parser import extract_imports, extract_calls
-from importguard_app.checker import check_module, check_method
+from importguard_app.checker import check_module, check_method, check_chain
 
 app = typer.Typer()
 console = Console()
@@ -28,15 +28,16 @@ def check(file_path: str):
     console.print("\n[bold underline]CALL CHECK[/bold underline]")
     for call in calls:
         module = call["module"]
-        method = call["method"]
+        attrs = call["attrs"]
         line = call["line"]
+        full_name = module + "." + ".".join(attrs)
 
         if check_module(module) in ("stdlib", "installed"):
-            exists = check_method(module, method)
+            exists = check_chain(module, attrs)
             if exists is False:
-                console.print(f"[red]✗ Line {line}: {module}.{method}() does not exist![/red]")
+                console.print(f"[red]✗ Line {line}: {full_name}() does not exist![/red]")
             else:
-                console.print(f"[green]✓ Line {line}: {module}.{method}()[/green]")
+                console.print(f"[green]✓ Line {line}: {full_name}()[/green]")
         else:
             console.print(f"[yellow]? Line {line}: {module} not installed, cannot verify[/yellow]")
 

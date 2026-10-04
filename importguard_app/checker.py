@@ -29,3 +29,17 @@ def check_method(module_name, method_name):
     except Exception:
         return None
     return hasattr(module, method_name)
+
+
+def check_chain(module_name, attrs):
+    try:
+        obj = importlib.import_module(module_name)
+    except Exception:
+        return None
+
+    for attr in attrs:
+        if hasattr(obj, attr):
+            obj = getattr(obj, attr)
+        else:
+            return False
+    return True

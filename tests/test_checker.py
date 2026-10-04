@@ -14,3 +14,11 @@ def test_real_method_exists():
 
 def test_fake_method_does_not_exist():
     assert check_method("requests", "get_jsonnn") is False
+
+from importguard_app.checker import check_chain
+
+def test_nested_real_chain():
+    assert check_chain("os", ["path", "join"]) is True
+
+def test_nested_fake_chain():
+    assert check_chain("os", ["path", "joinnn"]) is False
